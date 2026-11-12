@@ -1,0 +1,253 @@
+/* ==========================================================
+   T20 — Ficha Mobile
+   Só vale para a ficha com o template do módulo (form.t20fm)
+   e a janela marcada com .t20fm-app. A ficha normal do
+   sistema não é afetada.
+   ========================================================== */
+
+/* ---------- Janela ---------- */
+
+/* A ficha do sistema exige 720 x 680 px; a coluna única cabe em qualquer tela. */
+.tormenta20.sheet.actor.t20fm-app {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.t20fm-app > .window-content {
+  padding: 4px 6px;
+}
+
+.t20fm-app form.t20fm {
+  --t20fm-espaco: 10px;
+  --t20fm-fundo-fixo: rgba(240, 236, 226, 0.96);
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100%;
+  margin-top: 0 !important;
+}
+
+body.theme-dark .t20fm-app form.t20fm,
+.t20fm-app.theme-dark form.t20fm {
+  --t20fm-fundo-fixo: rgba(30, 32, 40, 0.96);
+}
+
+.t20fm-app form.t20fm > nav.sheet-tabs {
+  flex: none !important;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.t20fm-app form.t20fm > nav.sheet-tabs > .item {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quem rola é o corpo da ficha (o sistema guarda a posição dessa rolagem entre atualizações). */
+.t20fm-app form.t20fm > .sheet-body {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+/* ---------- Coluna única ---------- */
+
+.t20fm-app form.t20fm .tab.attributes.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: var(--t20fm-espaco);
+  height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 24px;
+}
+
+/* Toda seção ocupa a largura inteira (desfaz as larguras das duas colunas do sistema). */
+.t20fm-app form.t20fm .tab.attributes > *,
+.t20fm-app form.t20fm .t20fm-secao > * {
+  flex: none !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.t20fm-app form.t20fm .t20fm-secao {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px;
+  scroll-margin-top: 48px; /* não fica escondida atrás dos atalhos */
+}
+
+.t20fm-app form.t20fm .t20fm-titulo {
+  margin: 4px 0 0;
+  padding: 0 0 2px;
+  border-bottom: 2px solid var(--color-border-dark-secondary, rgba(0, 0, 0, 0.35));
+  font-size: 1.05rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Atalhos (fixos no topo ao rolar) ---------- */
+
+.t20fm-app form.t20fm .t20fm-atalhos {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-around;
+  gap: 4px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.15));
+  background: var(--t20fm-fundo-fixo);
+}
+
+.t20fm-app form.t20fm .t20fm-atalhos > a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.t20fm-app form.t20fm .t20fm-atalhos > a:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- 1. Identificação ---------- */
+
+.t20fm-app form.t20fm .sheet-header {
+  flex: none !important;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.t20fm-app form.t20fm .sheet-header img.profile {
+  flex: 0 0 84px !important;
+  max-width: 84px !important;
+  height: 84px !important;
+}
+
+.t20fm-app form.t20fm .sheet-header .header-details {
+  min-width: 0;
+}
+
+.t20fm-app form.t20fm .sheet-header .general-information {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.t20fm-app form.t20fm .sheet-header h1.charname {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.t20fm-app form.t20fm .sheet-header .header-exp {
+  flex: 1 1 140px;
+  margin-right: 0;
+}
+
+/* Raça / origem / classe / divindade: quebram em duas linhas se precisar. */
+.t20fm-app form.t20fm .sheet-header .summary {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.t20fm-app form.t20fm .sheet-header .summary > li {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+
+/* ---------- 2. Atributos, PV, PM e Defesa ---------- */
+
+.t20fm-app form.t20fm .resources-main ul.attributes {
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+.t20fm-app form.t20fm .resources-main ul.attributes > li {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Em telas estreitas, 3 atributos por linha. */
+@media (max-width: 480px) {
+  .t20fm-app form.t20fm ul.ability-scores {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .t20fm-app form.t20fm ul.ability-scores > .ability {
+    flex: 1 1 30%;
+  }
+
+  .t20fm-app form.t20fm ul.ability-scores > .ability:nth-child(3n) {
+    border-right: none;
+  }
+}
+
+/* ---------- Listas (perícias, armas, itens, poderes, magias) ---------- */
+
+/* Nomes longos quebram linha em vez de empurrar as colunas para fora da tela. */
+.t20fm-app form.t20fm .item-list .item .item-name label,
+.t20fm-app form.t20fm .item-list .item .item-rolls {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.t20fm-app form.t20fm .item-list .item {
+  min-height: 36px;
+}
+
+/* Editar/excluir itens só aparecia passando o mouse por cima. */
+.t20fm-app form.t20fm .item-list .item:not(.item-header) .item-controls {
+  visibility: visible !important;
+}
+
+.t20fm-app form.t20fm .item-list .item-controls .item-control {
+  min-width: 28px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botões de configurar atributos (também só apareciam no hover). */
+.t20fm-app form.t20fm .ability .config-button {
+  display: block !important;
+}
+
+.t20fm-app form.t20fm ul.skills-list > li.skill {
+  min-height: 30px;
+  align-items: center;
+}
+
+/* ---------- 6. Características ---------- */
+
+.t20fm-app form.t20fm .traits textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---------- Diário: notas e características empilhadas ---------- */
+
+.t20fm-app form.t20fm .tab.journal.active {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.t20fm-app form.t20fm .tab.journal > * {
+  flex: none !important;
+  width: 100% !important;
+  height: auto !important;
+}

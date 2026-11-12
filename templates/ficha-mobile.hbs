@@ -1,0 +1,104 @@
+<form class="tormenta20 base t20fm" autocomplete="off">
+	{{!-- Abas do sistema (Ficha / Diário / Efeitos) --}}
+	{{> "tormenta20.nav-bar"}}
+
+	<section class="sheet-body">
+		{{!-- Ficha: tudo em uma coluna --}}
+		<div class="tab attributes flexcol" data-group="primary" data-tab="attributes">
+
+			{{!-- 1. Identificação --}}
+			{{> "tormenta20.sheet-header-base"}}
+
+			{{!-- Atalhos para as seções --}}
+			<nav class="t20fm-atalhos">
+				<a data-t20fm-ir="atributos" title="{{localize 'T20FM.Secao.Atributos'}}"><i class="fa-solid fa-dumbbell"></i></a>
+				<a data-t20fm-ir="pericias" title="{{localize 'T20FM.Secao.Pericias'}}"><i class="fa-solid fa-list-check"></i></a>
+				<a data-t20fm-ir="equipamentos" title="{{localize 'T20FM.Secao.Equipamentos'}}"><i class="fa-solid fa-khanda"></i></a>
+				<a data-t20fm-ir="poderes" title="{{localize 'T20FM.Secao.Poderes'}}"><i class="fa-solid fa-bolt"></i></a>
+				<a data-t20fm-ir="caracteristicas" title="{{localize 'T20FM.Secao.Caracteristicas'}}"><i class="fa-solid fa-scroll"></i></a>
+			</nav>
+
+			{{!-- 2. Atributos, PV/PM/Defesa e recursos extras --}}
+			<section class="t20fm-secao attributes-left flexcol" data-t20fm-secao="atributos">
+				<h3 class="t20fm-titulo">{{localize "T20FM.Secao.Atributos"}}</h3>
+				{{> "tormenta20.abilities"}}
+
+				<div class="resources-main">
+					<ul class="attributes flexrow">
+					{{> "tormenta20.resources"}}
+					{{> "tormenta20.defense"}}
+					</ul>
+				</div>
+
+				{{#if (or system.resources.shadow system.resources.shadow ) }}
+				<div class="resource">
+					{{> "tormenta20.resources-extra"}}
+				</div>
+				{{/if}}
+			</section>
+
+			{{!-- 3. Perícias --}}
+			<section class="t20fm-secao attributes-right flexcol" data-t20fm-secao="pericias">
+				<h3 class="t20fm-titulo">{{localize "T20FM.Secao.Pericias"}}</h3>
+				{{> "tormenta20.list-skills"}}
+			</section>
+
+			{{!-- 4. Armas e equipamentos --}}
+			<section class="t20fm-secao attributes-left flexcol" data-t20fm-secao="equipamentos">
+				<h3 class="t20fm-titulo">{{localize "T20FM.Secao.Equipamentos"}}</h3>
+				<div class="inventory-weapons">
+					{{> "tormenta20.list-weapon"}}
+				</div>
+
+				<div class="inventory-equipment flexrow">
+					{{> "tormenta20.list-equipment"}}
+				</div>
+			</section>
+			<section class="t20fm-secao attributes-right flexcol">
+				<div class="inventory-list">
+					{{> "tormenta20.list-general"}}
+					{{> "tormenta20.currency"}}
+					{{> "tormenta20.encumbrance"}}
+				</div>
+			</section>
+
+			{{!-- 5. Poderes e magias --}}
+			<section class="t20fm-secao attributes-left flexcol" data-t20fm-secao="poderes">
+				<h3 class="t20fm-titulo">{{localize "T20FM.Secao.Poderes"}}</h3>
+				<div class="list-powers">
+					{{> "tormenta20.list-powers"}}
+				</div>
+
+				{{#if actor.maiorCirculo}}
+				<div class="list-spells">
+					{{> "tormenta20.list-spells"}}
+				</div>
+				{{/if}}
+			</section>
+
+			{{!-- 6. Outras características e proficiências --}}
+			<section class="t20fm-secao attributes-left flexcol" data-t20fm-secao="caracteristicas">
+				<h3 class="t20fm-titulo">{{localize "T20FM.Secao.Caracteristicas"}}</h3>
+				<div class="traits">
+					{{> "tormenta20.traits"}}
+					<textarea name="system.detalhes.info" rows="10">{{system.detalhes.info}}</textarea>
+				</div>
+			</section>
+		</div>
+
+		{{!-- Diário --}}
+		<div class="tab journal flexcol" data-group="primary" data-tab="journal">
+			{{> "tormenta20.journal"}}
+		</div>
+
+		{{!-- Modificadores --}}
+		<div class="tab modifiers" data-group="primary" data-tab="modifiers">
+			{{> "tormenta20.modifiers"}}
+		</div>
+
+		{{!-- Efeitos --}}
+		<div class="tab effects" data-group="primary" data-tab="effects">
+			{{> "tormenta20.active-effects"}}
+		</div>
+	</section>
+</form>

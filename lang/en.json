@@ -1,0 +1,43 @@
+{
+  "T20FM": {
+    "Config": {
+      "modo": {
+        "Nome": "Player mode (sheet and chat only)",
+        "Dica": "On this device: hides the map, sound and Foundry interface, showing only the character sheet, in a single column, and the chat. Automatic: on phones and tablets, never for the GM. Can also be forced via URL: /game?t20fm=1 or ?t20fm=0.",
+        "Auto": "Automatic (phones and tablets)",
+        "Sempre": "Always on",
+        "Nunca": "Off"
+      },
+      "zoom": {
+        "Nome": "Sheet and chat zoom (%)",
+        "Dica": "Enlarges or shrinks the content on this device."
+      },
+      "manterTelaLigada": {
+        "Nome": "Keep screen on",
+        "Dica": "Prevents the phone from turning off the screen during the game. Requires Foundry over HTTPS."
+      }
+    },
+    "Barra": {
+      "Ficha": "Sheet",
+      "Chat": "Chat",
+      "Mais": "More"
+    },
+    "Menu": {
+      "Trocar": "Switch character",
+      "TelaCheia": "Fullscreen",
+      "Recarregar": "Reload",
+      "Sair": "Leave player mode"
+    },
+    "Fundo": {
+      "Escolha": "Choose your character",
+      "SemPersonagem": "You don't have a character yet. Ask the GM to assign one to your user or give you Owner permission."
+    },
+    "Secao": {
+      "Atributos": "Attributes",
+      "Pericias": "Skills",
+      "Equipamentos": "Weapons and equipment",
+      "Poderes": "Powers and spells",
+      "Caracteristicas": "Traits and proficiencies"
+    }
+  }
+}

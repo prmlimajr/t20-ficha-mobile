@@ -1,0 +1,37 @@
+name: Release
+
+# Roda quando você publica um Release no GitHub (ex.: tag 1.0.1).
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ajustar versão e link de download no module.json
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          REPO="https://github.com/${GITHUB_REPOSITORY}"
+          jq --arg v "$VERSION" \
+             --arg u "$REPO" \
+             --arg m "$REPO/releases/latest/download/module.json" \
+             --arg d "$REPO/releases/download/${TAG}/module.zip" \
+             '.version = $v | .url = $u | .manifest = $m | .download = $d' module.json > module.tmp.json
+          mv module.tmp.json module.json
+
+      - name: Empacotar
+        run: zip -r module.zip module.json scripts styles templates lang
+
+      - name: Anexar arquivos ao release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            module.json
+            module.zip

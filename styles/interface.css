@@ -1,0 +1,331 @@
+/* ==========================================================
+   T20 — Ficha Mobile: modo jogador
+   Tudo fica sob body.t20fm-ativo, então nada muda em
+   aparelhos onde o modo está desligado (mestre, TV).
+   ========================================================== */
+
+body.t20fm-ativo {
+  --t20fm-zoom: 1;
+  --t20fm-fundo: #14161c;
+  --t20fm-cartao: #1f232d;
+  --t20fm-texto: #eceef3;
+  --t20fm-suave: #9aa1b2;
+  --t20fm-destaque: #c9482b;
+  --t20fm-borda: rgba(255, 255, 255, 0.12);
+  --t20fm-seguro-baixo: env(safe-area-inset-bottom, 0px);
+  --t20fm-altura-barra: calc(58px + var(--t20fm-seguro-baixo));
+  background: var(--t20fm-fundo) !important;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ---------- Nada do Foundry além da ficha e do chat ---------- */
+
+body.t20fm-ativo #board {
+  display: none !important;
+}
+
+body.t20fm-ativo #interface {
+  visibility: hidden !important;
+}
+
+/* Mantém visíveis: notificações, barra de carregamento e as janelas permitidas. */
+body.t20fm-ativo #interface :is(#notifications, #loading, .t20fm-janela) {
+  visibility: visible !important;
+}
+
+body.t20fm-ativo :is(#hotbar, #players, #navigation, #scene-navigation, #controls, #scene-controls, #logo, #pause, #camera-views, #fps, #sidebar) {
+  display: none !important;
+}
+
+/* ---------- Fundo (atrás da ficha) ---------- */
+
+#t20fm-fundo {
+  position: fixed;
+  inset: 0 0 var(--t20fm-altura-barra) 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at 50% 20%, #262b38 0%, var(--t20fm-fundo) 70%);
+  color: var(--t20fm-texto);
+  font-family: var(--font-primary, sans-serif);
+  overflow-y: auto;
+}
+
+#t20fm-fundo .t20fm-cartao {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  text-align: center;
+}
+
+#t20fm-fundo .t20fm-retrato {
+  align-self: center;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--t20fm-destaque);
+  background: var(--t20fm-cartao);
+}
+
+#t20fm-fundo .t20fm-nome {
+  margin: 4px 0 8px;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--t20fm-texto);
+}
+
+#t20fm-fundo .t20fm-texto {
+  color: var(--t20fm-suave);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.t20fm-botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--t20fm-borda);
+  border-radius: 10px;
+  background: var(--t20fm-cartao);
+  color: var(--t20fm-texto);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.t20fm-botao.t20fm-principal {
+  background: var(--t20fm-destaque);
+  border-color: transparent;
+  font-weight: bold;
+}
+
+.t20fm-botao.t20fm-sair {
+  color: var(--t20fm-suave);
+}
+
+#t20fm-fundo .t20fm-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#t20fm-fundo .t20fm-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--t20fm-borda);
+  border-radius: 10px;
+  background: var(--t20fm-cartao);
+  color: var(--t20fm-texto);
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+#t20fm-fundo .t20fm-item img {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  object-fit: cover;
+  border: none;
+  border-radius: 50%;
+}
+
+/* ---------- Barra do rodapé: Ficha | Chat | Mais ---------- */
+
+#t20fm-barra {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100000;
+  display: flex;
+  height: var(--t20fm-altura-barra);
+  padding-bottom: var(--t20fm-seguro-baixo);
+  border-top: 1px solid var(--t20fm-borda);
+  background: rgba(20, 22, 28, 0.98);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+}
+
+#t20fm-barra .t20fm-aba {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--t20fm-suave);
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+#t20fm-barra .t20fm-aba > i {
+  font-size: 1.3rem;
+}
+
+body[data-t20fm-aba="ficha"] #t20fm-barra .t20fm-aba[data-aba="ficha"],
+body[data-t20fm-aba="chat"] #t20fm-barra .t20fm-aba[data-aba="chat"] {
+  color: var(--t20fm-texto);
+  box-shadow: inset 0 3px 0 var(--t20fm-destaque);
+}
+
+/* Mensagem nova no chat. */
+#t20fm-barra .t20fm-badge {
+  position: absolute;
+  top: 9px;
+  left: calc(50% + 10px);
+  display: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--t20fm-destaque);
+}
+
+#t20fm-barra .t20fm-badge.visivel {
+  display: block;
+}
+
+#t20fm-menu {
+  position: fixed;
+  right: 8px;
+  bottom: calc(var(--t20fm-altura-barra) + 8px);
+  z-index: 100000;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+  padding: 8px;
+  border: 1px solid var(--t20fm-borda);
+  border-radius: 12px;
+  background: rgba(20, 22, 28, 0.97);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
+
+#t20fm-menu.aberto {
+  display: flex;
+}
+
+#t20fm-menu .t20fm-botao {
+  justify-content: flex-start;
+}
+
+/* ---------- Ficha e chat em tela cheia (acima da barra) ---------- */
+
+body.t20fm-ativo .t20fm-tela {
+  position: fixed !important;
+  inset: 0 0 var(--t20fm-altura-barra) 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - var(--t20fm-altura-barra)) !important;
+  height: calc(100dvh - var(--t20fm-altura-barra)) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  transform: none !important;
+}
+
+body.t20fm-ativo .t20fm-tela > .window-content {
+  zoom: var(--t20fm-zoom);
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cada aba mostra só as suas janelas (diálogos de rolagem aparecem nas duas). */
+body.t20fm-ativo[data-t20fm-aba="ficha"] .t20fm-chat,
+body.t20fm-ativo[data-t20fm-aba="chat"] .t20fm-tela:not(.t20fm-chat) {
+  display: none !important;
+}
+
+body.t20fm-ativo[data-t20fm-aba="chat"] #t20fm-fundo {
+  visibility: hidden;
+}
+
+body.t20fm-ativo .t20fm-tela :is(.window-resizable-handle, .window-resize-handle) {
+  display: none !important;
+}
+
+/* Chat: mensagens e campo de digitar ocupam a tela. */
+body.t20fm-ativo .t20fm-chat > .window-content {
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+body.t20fm-ativo .t20fm-chat :is(#chat-log, .chat-log) {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+body.t20fm-ativo .t20fm-chat :is(#chat-message, .chat-form textarea, textarea#chat-message) {
+  font-size: 16px; /* abaixo disso o iOS dá zoom ao focar */
+}
+
+/* Outras janelas (diálogos de rolagem, configurações...): nunca maiores que a tela. */
+body.t20fm-ativo .t20fm-janela:not(.t20fm-tela) {
+  max-width: calc(100vw - 8px) !important;
+  max-height: calc(100dvh - var(--t20fm-altura-barra) - 8px) !important;
+  z-index: 100001 !important;
+}
+
+body.t20fm-ativo .t20fm-janela:not(.t20fm-tela) > .window-content {
+  overflow: auto !important;
+}
+
+/* Cabeçalho e botões maiores para o dedo. */
+body.t20fm-ativo .t20fm-janela > .window-header {
+  min-height: 44px;
+  font-size: 16px;
+}
+
+body.t20fm-ativo .t20fm-janela > .window-header :is(a, button) {
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Evita o menu nativo de "copiar/salvar imagem" ao segurar o dedo, sem atrapalhar campos de texto. */
+body.t20fm-ativo .t20fm-janela {
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+body.t20fm-ativo .t20fm-janela :is(input, textarea, [contenteditable]) {
+  -webkit-touch-callout: default;
+  user-select: text;
+}
+
+/* Menus de contexto e tooltips cabendo na tela. */
+body.t20fm-ativo :is(#context-menu, .context-menu) {
+  max-width: calc(100vw - 16px);
+  z-index: 100002 !important;
+}
+
+body.t20fm-ativo #tooltip {
+  max-width: calc(100vw - 16px);
+}

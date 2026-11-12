@@ -1,0 +1,43 @@
+{
+  "T20FM": {
+    "Config": {
+      "modo": {
+        "Nome": "Modo jogador (só ficha e chat)",
+        "Dica": "Neste aparelho: esconde mapa, som e interface do Foundry e mostra só a ficha do personagem, em uma coluna, e o chat. Automático: liga em celulares e tablets, nunca para o mestre. Também dá para forçar pela URL: /game?t20fm=1 ou ?t20fm=0.",
+        "Auto": "Automático (celulares e tablets)",
+        "Sempre": "Sempre ativo",
+        "Nunca": "Desativado"
+      },
+      "zoom": {
+        "Nome": "Zoom da ficha e do chat (%)",
+        "Dica": "Aumenta ou diminui o conteúdo neste aparelho."
+      },
+      "manterTelaLigada": {
+        "Nome": "Manter a tela ligada",
+        "Dica": "Impede que o celular apague a tela durante o jogo. Só funciona com o Foundry em HTTPS."
+      }
+    },
+    "Barra": {
+      "Ficha": "Ficha",
+      "Chat": "Chat",
+      "Mais": "Mais"
+    },
+    "Menu": {
+      "Trocar": "Trocar personagem",
+      "TelaCheia": "Tela cheia",
+      "Recarregar": "Recarregar",
+      "Sair": "Sair do modo jogador"
+    },
+    "Fundo": {
+      "Escolha": "Escolha seu personagem",
+      "SemPersonagem": "Você ainda não tem um personagem. Peça ao mestre para atribuir um personagem ao seu usuário ou dar a você permissão de Dono."
+    },
+    "Secao": {
+      "Atributos": "Atributos",
+      "Pericias": "Perícias",
+      "Equipamentos": "Armas e equipamentos",
+      "Poderes": "Poderes e magias",
+      "Caracteristicas": "Características e proficiências"
+    }
+  }
+}
