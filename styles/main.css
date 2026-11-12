@@ -231,6 +231,26 @@ body.theme-dark .t20fm-app form.t20fm,
   align-items: center;
 }
 
+/* ---------- Toque: o dedo rola a ficha, não arrasta itens ---------- */
+
+.t20fm-app form.t20fm .sheet-body {
+  touch-action: pan-y; /* deslizar na vertical é sempre rolagem */
+}
+
+.t20fm-app form.t20fm :is(.item, .item-image, img, li) {
+  -webkit-user-drag: none; /* Safari: sem "arrastar" imagens e linhas */
+}
+
+.t20fm-app form.t20fm :is(.item-list, .skills-list, .ability-scores) {
+  -webkit-user-select: none; /* segurar o dedo não seleciona texto da lista */
+  user-select: none;
+}
+
+.t20fm-app form.t20fm :is(input, textarea, select, [contenteditable]) {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 /* ---------- 6. Características ---------- */
 
 .t20fm-app form.t20fm .traits textarea {

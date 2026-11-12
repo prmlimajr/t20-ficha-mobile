@@ -249,12 +249,36 @@ function copiarFundo(alvo, limite) {
 }
 
 /** Marca a janela da coluna (o CSS tira a largura mínima de 720 px) e liga os atalhos. */
+/**
+ * No celular, deslizar o dedo sobre um item "arrastável" pode virar arrastar e soltar (Chrome no
+ * Android, Safari no iPad), e a ficha entende como mover/reordenar o item. Ninguém arrasta itens
+ * no celular, então o arrasto é desligado: o dedo só rola a ficha.
+ */
+function desligarArrasto(e) {
+  for (const d of e.querySelectorAll('[draggable="true"]')) d.draggable = false;
+}
+
+const ARRASTO_BLOQUEADO = ".t20fm-app, .t20fm-tela";
+
+/** Reserva: barra qualquer arrasto que comece ou termine numa ficha em coluna (ou janela do modo jogador). */
+function bloquearArrastoGlobal() {
+  const barrar = (ev) => {
+    const alvo = ev.target instanceof Element ? ev.target : ev.target?.parentElement;
+    if (!alvo?.closest(ARRASTO_BLOQUEADO)) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (ev.dataTransfer) ev.dataTransfer.dropEffect = "none";
+  };
+  for (const tipo of ["dragstart", "dragover", "drop"]) document.addEventListener(tipo, barrar, true);
+}
+
 function aoRenderizarFicha(app, html) {
   const e = elementoDe(app, html);
   if (!e) return;
   const coluna = Boolean(e.querySelector("form.t20fm"));
   e.classList.toggle("t20fm-app", coluna);
   if (!coluna) return;
+  desligarArrasto(e);
   const atalhos = e.querySelector(".t20fm-atalhos");
   if (atalhos) copiarFundo(atalhos, e);
   for (const a of e.querySelectorAll("[data-t20fm-ir]")) {
@@ -702,6 +726,7 @@ Hooks.once("init", () => {
   carregar?.([TEMPLATE]);
   adaptarClasses();
   Hooks.on("renderActorSheet", aoRenderizarFicha);
+  bloquearArrastoGlobal();
 
   if (!ATIVO) return;
   ajustarViewport();

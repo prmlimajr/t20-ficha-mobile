@@ -73,4 +73,4 @@ Não é preciso usar os dois. Se o [Mobile Sheet Only](https://github.com/prmlim
 - Só a ficha de **personagem** é montada em coluna. Outras fichas (NPC, Bases) abrem em tela cheia como no sistema.
 - Se o mundo usar áudio e vídeo (câmeras), a conexão de A/V continua sendo feita pelo Foundry no celular. As câmeras ficam escondidas, mas, para economizar de verdade, recuse a permissão de câmera e microfone no navegador do celular.
 - **Manter a tela ligada** só funciona com HTTPS. Em rede local via `http://`, desative o bloqueio automático de tela do celular durante a sessão.
-- Arrastar e soltar itens não funciona por toque no navegador. Isso é uma limitação do HTML5 em celulares.
+- **Arrastar e soltar fica desligado** na ficha em coluna: no celular, deslizar o dedo sobre um item podia virar "arrastar" e reordenar ou mover itens por engano. O dedo só rola a ficha. Para reorganizar itens, use a ficha no computador.
