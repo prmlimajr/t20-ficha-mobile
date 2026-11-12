@@ -12,6 +12,10 @@
         "Nome": "Sheet and chat zoom (%)",
         "Dica": "Enlarges or shrinks the content on this device."
       },
+      "tempoAviso": {
+        "Nome": "Chat notification (seconds)",
+        "Dica": "How long the new or updated message notification stays over the sheet. 0 turns it off; the red dot on the Chat button remains."
+      },
       "manterTelaLigada": {
         "Nome": "Keep screen on",
         "Dica": "Prevents the phone from turning off the screen during the game. Requires Foundry over HTTPS."
@@ -38,6 +42,12 @@
       "Equipamentos": "Weapons and equipment",
       "Poderes": "Powers and spells",
       "Caracteristicas": "Traits and proficiencies"
+    },
+    "Aviso": {
+      "Chat": "Chat",
+      "Rolagem": "Roll",
+      "Mensagem": "New message",
+      "Atualizada": "Updated"
     }
   }
 }

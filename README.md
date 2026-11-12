@@ -10,7 +10,8 @@ Nada do Foundry fica ativo além da ficha e do chat, para poupar bateria e proce
 - **Sem som:** música, ambiente e sons de interface ficam zerados no aparelho (o som sai da TV). Os volumes voltam ao sair do modo.
 - **Sem interface:** barra lateral, hotbar, controles de cena, navegação, lista de jogadores e câmeras ficam escondidos.
 - **Sem janelas extras:** diários, cenas, tabelas, macros e imagens mostradas pelo mestre não abrem no celular.
-- **Barra no rodapé** com **Ficha**, **Chat** e **Mais** (trocar personagem, tela cheia, recarregar, sair do modo). Um ponto vermelho no Chat avisa quando chega mensagem nova.
+- **Barra no rodapé** com **Ficha**, **Chat** e **Mais** (trocar personagem, tela cheia, recarregar, sair do modo).
+- **Aviso de novidade no chat:** quando chega uma mensagem nova ou uma mensagem é atualizada, um aviso sobe do rodapé por alguns segundos, com o autor e o começo do texto (ou o total da rolagem). Só aparece um aviso por vez: um novo substitui o anterior. Tocar nele abre o chat. Um ponto vermelho no botão Chat fica marcado até o chat ser aberto.
 - **Ficha em tela cheia e em uma coluna.** Itens abertos a partir dela também ficam em tela cheia. Os diálogos de rolagem aparecem por cima e cabem na tela.
 - **Toque longo = clique direito no iPhone/iPad**, para os menus dos itens (editar, excluir, equipar). No Android isso já é nativo.
 - Tenta **manter a tela ligada** (precisa de HTTPS).
@@ -47,12 +48,19 @@ A ficha continua sendo a **"Ficha de Personagem" do Tormenta20**: o módulo só 
 
 Se a TV for uma smart TV ou um tablet e o modo ligar por engano, abra `/game?t20fm=0` nela.
 
+### Fonte Tormenta 20
+
+Na tela de escolha de personagem e na tela com o retrato, o título e o nome do personagem usam a fonte **Tormenta 20**, se ela estiver disponível. Senão, usam a **Modesto Condensed**, que vem com o Foundry.
+
+O sistema Tormenta20 não traz o arquivo da fonte. Para usá-la, o mestre cadastra o arquivo em **Configurações → Configurar Fontes Adicionais** com o nome `Tormenta20`.
+
 ## Configurações (por aparelho)
 
 | Configuração | Padrão | Para que serve |
 |---|---|---|
 | Modo jogador | Automático | Liga ou desliga o modo neste aparelho |
 | Zoom da ficha e do chat (%) | 100 | Aumenta ou diminui o conteúdo |
+| Aviso de novidade no chat (segundos) | 4 | Quanto tempo o aviso fica na tela. 0 desliga o aviso |
 | Manter a tela ligada | Sim | Usa a Wake Lock API (só em HTTPS) |
 
 ## Junto com o Mobile Sheet Only

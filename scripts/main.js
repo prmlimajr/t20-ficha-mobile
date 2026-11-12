@@ -60,6 +60,16 @@ function registrarConfiguracoes() {
     onChange: aplicarZoom
   });
 
+  game.settings.register(MODULE_ID, "tempoAviso", {
+    name: "T20FM.Config.tempoAviso.Nome",
+    hint: "T20FM.Config.tempoAviso.Dica",
+    scope: "client",
+    config: true,
+    type: Number,
+    range: { min: 0, max: 15, step: 1 },
+    default: 4
+  });
+
   game.settings.register(MODULE_ID, "manterTelaLigada", {
     name: "T20FM.Config.manterTelaLigada.Nome",
     hint: "T20FM.Config.manterTelaLigada.Dica",
@@ -218,6 +228,26 @@ function adaptarClasses() {
   if (!CLASSES.length) console.warn(`${MODULE_ID} | não consegui adaptar as fichas do Tormenta20`);
 }
 
+/**
+ * A barra de atalhos fica fixa no topo enquanto a ficha rola, então precisa de fundo opaco.
+ * O fundo da ficha vem do Foundry (muda com a versão e com o tema claro/escuro), então copiamos
+ * o fundo real do primeiro elemento acima dela que tenha cor ou textura.
+ */
+function copiarFundo(alvo, limite) {
+  const transparente = (c) => !c || c === "transparent" || /rgba\(.*,\s*0\)$/.test(c);
+  for (let p = alvo.parentElement; p; p = p.parentElement) {
+    const s = getComputedStyle(p);
+    if (!transparente(s.backgroundColor) || s.backgroundImage !== "none") {
+      alvo.style.backgroundColor = transparente(s.backgroundColor) ? "" : s.backgroundColor;
+      alvo.style.backgroundImage = s.backgroundImage;
+      alvo.style.backgroundSize = s.backgroundSize;
+      alvo.style.backgroundRepeat = s.backgroundRepeat;
+      return;
+    }
+    if (p === limite) return;
+  }
+}
+
 /** Marca a janela da coluna (o CSS tira a largura mínima de 720 px) e liga os atalhos. */
 function aoRenderizarFicha(app, html) {
   const e = elementoDe(app, html);
@@ -225,6 +255,8 @@ function aoRenderizarFicha(app, html) {
   const coluna = Boolean(e.querySelector("form.t20fm"));
   e.classList.toggle("t20fm-app", coluna);
   if (!coluna) return;
+  const atalhos = e.querySelector(".t20fm-atalhos");
+  if (atalhos) copiarFundo(atalhos, e);
   for (const a of e.querySelectorAll("[data-t20fm-ir]")) {
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
@@ -326,6 +358,7 @@ function popoutDoChat() {
 async function abrirChat() {
   mostrarAba("chat");
   UI.badge?.classList.remove("visivel");
+  esconderAviso();
   const chat = ui.chat;
   if (!chat) return;
   try {
@@ -348,7 +381,7 @@ async function sairDoModo() {
 /*  Interface própria (fundo, barra, menu)      */
 /* -------------------------------------------- */
 
-const UI = { fundo: null, barra: null, menu: null, badge: null };
+const UI = { fundo: null, barra: null, menu: null, badge: null, aviso: null, timerAviso: null };
 
 function el(tag, classe, texto) {
   const e = document.createElement(tag);
@@ -399,7 +432,16 @@ function montarInterface() {
   UI.menu = el("div");
   UI.menu.id = "t20fm-menu";
 
-  document.body.append(UI.fundo, UI.menu, UI.barra);
+  // Aviso de novidade no chat (um só elemento: um aviso por vez).
+  UI.aviso = el("div");
+  UI.aviso.id = "t20fm-aviso";
+  UI.aviso.setAttribute("role", "status");
+  UI.aviso.addEventListener("click", () => {
+    esconderAviso();
+    abrirChat();
+  });
+
+  document.body.append(UI.fundo, UI.aviso, UI.menu, UI.barra);
   document.addEventListener("pointerdown", (ev) => {
     if (!ev.target.closest?.("#t20fm-menu, #t20fm-barra")) fecharMenu();
     manterTelaLigada();
@@ -428,6 +470,16 @@ function abrirMenu() {
 
 function fecharMenu() {
   UI.menu?.classList.remove("aberto");
+}
+
+/**
+ * Imagem do token do personagem. Tokens "curinga" (caminho com * ou ?, sorteado ao colocar o
+ * token na cena) não têm uma imagem só; nesse caso, e se não houver token, usa a do ator.
+ */
+function imagemDoToken(actor) {
+  const src = actor.prototypeToken?.texture?.src ?? actor.prototypeToken?.img;
+  const curinga = actor.prototypeToken?.randomImg || /[*?]/.test(src ?? "");
+  return src && !curinga ? src : actor.img;
 }
 
 /** Tela atrás da ficha: retrato + botão, ou a lista para escolher personagem. */
@@ -461,10 +513,13 @@ function atualizarFundo() {
   for (const a of lista) {
     const item = el("button", "t20fm-item");
     item.type = "button";
+    const moldura = el("span", "t20fm-token");
     const img = el("img");
-    img.src = a.img;
+    img.src = imagemDoToken(a);
     img.alt = "";
-    item.append(img, el("span", "", a.name));
+    img.addEventListener("error", () => (img.src = a.img), { once: true });
+    moldura.append(img);
+    item.append(moldura, el("span", "t20fm-item-nome", a.name));
     item.addEventListener("click", () => escolherPersonagem(a));
     ul.append(item);
   }
@@ -687,8 +742,68 @@ Hooks.once("ready", () => {
   Hooks.on("createActor", () => atualizarFundo());
   Hooks.on("deleteActor", () => atualizarFundo());
 
-  // Mensagem nova enquanto o jogador está na ficha: marca o botão do chat.
-  Hooks.on("createChatMessage", () => {
-    if (document.body.dataset.t20fmAba !== "chat") UI.badge?.classList.add("visivel");
+  // Novidade no chat enquanto o jogador está na ficha: marca o botão do chat e mostra o aviso.
+  Hooks.on("createChatMessage", (msg) => avisarChat(msg, false));
+  Hooks.on("updateChatMessage", (msg, mudancas) => {
+    if ("content" in mudancas || "rolls" in mudancas) avisarChat(msg, true);
   });
 });
+
+/* -------------------------------------------- */
+/*  Aviso de novidade no chat                   */
+/* -------------------------------------------- */
+
+function textoPuro(html, limite = 90) {
+  if (!html) return "";
+  // DOMParser não executa scripts nem handlers do conteúdo.
+  const t = new DOMParser().parseFromString(String(html), "text/html").body.textContent ?? "";
+  const limpo = t.replace(/\s+/g, " ").trim();
+  return limpo.length > limite ? `${limpo.slice(0, limite - 1)}…` : limpo;
+}
+
+function avisarChat(msg, atualizada) {
+  if (document.body.dataset.t20fmAba === "chat") return; // já está vendo o chat
+  if (msg.visible === false) return; // sussurro para outra pessoa
+  UI.badge?.classList.add("visivel");
+
+  const segundos = Number(cfg("tempoAviso")) || 0;
+  if (segundos <= 0 || !UI.aviso) return;
+
+  const autor = msg.speaker?.alias || (msg.author ?? msg.user)?.name || loc("Aviso.Chat");
+  let texto;
+  let valor = "";
+  if (msg.rolls?.length) {
+    const visivel = msg.isContentVisible !== false;
+    texto = textoPuro(msg.flavor, 60) || loc("Aviso.Rolagem");
+    valor = visivel ? msg.rolls.map((r) => r.total).join(" / ") : "?";
+  } else {
+    texto = textoPuro(msg.content) || loc("Aviso.Mensagem");
+  }
+  if (atualizada) texto = `${loc("Aviso.Atualizada")}: ${texto}`;
+  mostrarAviso(autor, texto, valor, segundos);
+}
+
+/** Um aviso por vez: um novo substitui o atual e reinicia o tempo. */
+function mostrarAviso(autor, texto, valor, segundos) {
+  const a = UI.aviso;
+  const corpo = el("div", "t20fm-aviso-corpo");
+  corpo.append(el("strong", "t20fm-aviso-autor", autor), el("span", "t20fm-aviso-texto", texto));
+  a.replaceChildren(el("i", "fa-solid fa-comment-dots"), corpo);
+  if (valor) a.append(el("strong", "t20fm-aviso-valor", valor));
+
+  clearTimeout(UI.timerAviso);
+  if (a.classList.contains("visivel")) {
+    // Já visível: volta para baixo sem animação e sobe de novo, para mostrar que o conteúdo mudou.
+    a.style.transition = "none";
+    a.classList.remove("visivel");
+    void a.offsetWidth;
+    a.style.transition = "";
+  }
+  a.classList.add("visivel");
+  UI.timerAviso = setTimeout(esconderAviso, segundos * 1000);
+}
+
+function esconderAviso() {
+  clearTimeout(UI.timerAviso);
+  UI.aviso?.classList.remove("visivel");
+}

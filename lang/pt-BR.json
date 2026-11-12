@@ -12,6 +12,10 @@
         "Nome": "Zoom da ficha e do chat (%)",
         "Dica": "Aumenta ou diminui o conteúdo neste aparelho."
       },
+      "tempoAviso": {
+        "Nome": "Aviso de novidade no chat (segundos)",
+        "Dica": "Por quanto tempo o aviso de mensagem nova ou atualizada aparece sobre a ficha. 0 desliga o aviso; o ponto vermelho no botão Chat continua."
+      },
       "manterTelaLigada": {
         "Nome": "Manter a tela ligada",
         "Dica": "Impede que o celular apague a tela durante o jogo. Só funciona com o Foundry em HTTPS."
@@ -38,6 +42,12 @@
       "Equipamentos": "Armas e equipamentos",
       "Poderes": "Poderes e magias",
       "Caracteristicas": "Características e proficiências"
+    },
+    "Aviso": {
+      "Chat": "Chat",
+      "Rolagem": "Rolagem",
+      "Mensagem": "Nova mensagem",
+      "Atualizada": "Atualizada"
     }
   }
 }

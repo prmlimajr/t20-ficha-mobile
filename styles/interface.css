@@ -13,7 +13,7 @@ body.t20fm-ativo {
   --t20fm-destaque: #c9482b;
   --t20fm-borda: rgba(255, 255, 255, 0.12);
   --t20fm-seguro-baixo: env(safe-area-inset-bottom, 0px);
-  --t20fm-altura-barra: calc(58px + var(--t20fm-seguro-baixo));
+  --t20fm-altura-barra: calc(68px + var(--t20fm-seguro-baixo));
   background: var(--t20fm-fundo) !important;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
@@ -73,10 +73,19 @@ body.t20fm-ativo :is(#hotbar, #players, #navigation, #scene-navigation, #control
   background: var(--t20fm-cartao);
 }
 
+/*
+ * "Escolha seu personagem" e nome do personagem: fonte Tormenta 20 quando existir (instalada no
+ * aparelho ou cadastrada pelo mestre em Configurações → Fontes Adicionais); senão Modesto
+ * Condensed, que vem com o Foundry.
+ */
 #t20fm-fundo .t20fm-nome {
   margin: 4px 0 8px;
   border: none;
-  font-size: 1.6rem;
+  font-family: "Tormenta20", "Tormenta 20", "Modesto Condensed", var(--font-primary, serif);
+  font-size: 2rem;
+  font-weight: normal;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
   color: var(--t20fm-texto);
 }
 
@@ -134,13 +143,27 @@ body.t20fm-ativo :is(#hotbar, #players, #navigation, #scene-navigation, #control
   text-align: left;
 }
 
-#t20fm-fundo .t20fm-item img {
-  width: 48px;
-  height: 48px;
+/* Token: moldura de tamanho fixo, para todas as imagens (e os nomes) ficarem alinhadas. */
+#t20fm-fundo .t20fm-item .t20fm-token {
   flex: none;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+}
+
+#t20fm-fundo .t20fm-item .t20fm-token img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* não corta o token (molduras e anéis aparecem inteiros) */
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
+}
+
+#t20fm-fundo .t20fm-item .t20fm-item-nome {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* ---------- Barra do rodapé: Ficha | Chat | Mais ---------- */
@@ -152,33 +175,53 @@ body.t20fm-ativo :is(#hotbar, #players, #navigation, #scene-navigation, #control
   bottom: 0;
   z-index: 100000;
   display: flex;
+  align-items: stretch;
+  box-sizing: border-box; /* a área segura do iPhone fica dentro da altura, não somada a ela */
   height: var(--t20fm-altura-barra);
-  padding-bottom: var(--t20fm-seguro-baixo);
+  padding: 0 0 var(--t20fm-seguro-baixo);
+  overflow: hidden;
   border-top: 1px solid var(--t20fm-borda);
   background: rgba(20, 22, 28, 0.98);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
 }
 
+/* !important: os botões do Foundry têm altura, padding e alinhamento próprios. */
 #t20fm-barra .t20fm-aba {
   position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  margin: 0;
-  padding: 0;
-  border: none;
+  flex: 1 1 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px;
+  box-sizing: border-box;
+  width: auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 6px 4px !important;
+  border: none !important;
   border-radius: 0;
-  background: none;
+  background: none !important;
   color: var(--t20fm-suave);
-  font-size: 0.75rem;
-  line-height: 1;
+  font-size: 0.8rem !important;
+  line-height: 1.1 !important;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #t20fm-barra .t20fm-aba > i {
-  font-size: 1.3rem;
+  margin: 0 !important;
+  font-size: 1.35rem;
+  line-height: 1 !important;
+}
+
+#t20fm-barra .t20fm-aba > span:not(.t20fm-badge) {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body[data-t20fm-aba="ficha"] #t20fm-barra .t20fm-aba[data-aba="ficha"],
@@ -201,6 +244,78 @@ body[data-t20fm-aba="chat"] #t20fm-barra .t20fm-aba[data-aba="chat"] {
 
 #t20fm-barra .t20fm-badge.visivel {
   display: block;
+}
+
+/* ---------- Aviso de novidade no chat (sobe de baixo, acima da barra) ---------- */
+
+#t20fm-aviso {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: calc(var(--t20fm-altura-barra) + 8px);
+  z-index: 99999; /* acima da ficha, abaixo da barra e dos diálogos */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid var(--t20fm-borda);
+  border-left: 4px solid var(--t20fm-destaque);
+  border-radius: 12px;
+  background: rgba(20, 22, 28, 0.97);
+  color: var(--t20fm-texto);
+  font-family: var(--font-primary, sans-serif);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+  /* Escondido abaixo da borda da tela. */
+  transform: translateY(calc(100% + var(--t20fm-altura-barra) + 16px));
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+#t20fm-aviso.visivel {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#t20fm-aviso > i {
+  flex: none;
+  font-size: 1.3rem;
+  color: var(--t20fm-destaque);
+}
+
+#t20fm-aviso .t20fm-aviso-corpo {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#t20fm-aviso .t20fm-aviso-autor {
+  overflow: hidden;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--t20fm-suave);
+}
+
+#t20fm-aviso .t20fm-aviso-texto {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* no máximo duas linhas */
+}
+
+#t20fm-aviso .t20fm-aviso-valor {
+  flex: none;
+  font-size: 1.8rem;
+  color: #fff;
 }
 
 #t20fm-menu {
