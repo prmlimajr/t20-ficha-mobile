@@ -18,7 +18,7 @@
       },
       "dados3d": {
         "Nome": "Dice So Nice 3D dice",
-        "Dica": "Shows the 3D dice animation over the sheet on this device. The map stays empty, but the phone uses a bit more battery. No effect if Dice So Nice is not active."
+        "Dica": "Shows the 3D dice animation over the sheet on this device. It is heavy: on weaker phones the page may freeze or reload by itself. While on, Foundry and the dice use the lowest graphics quality. No effect if Dice So Nice is not active."
       },
       "manterTelaLigada": {
         "Nome": "Keep screen on",

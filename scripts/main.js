@@ -18,6 +18,17 @@ const TEMPLATE = `modules/${MODULE_ID}/templates/ficha-mobile.hbs`;
 const MARCA_CANVAS = `${MODULE_ID}.forcouNoCanvas`;
 const MARCA_AUDIO = `${MODULE_ID}.volumesOriginais`;
 const CHAVES_VOLUME = ["core.globalPlaylistVolume", "core.globalAmbientVolume", "core.globalInterfaceVolume"];
+const MARCA_LEVE = `${MODULE_ID}.desempenhoOriginal`;
+/**
+ * Com dados 3D: desempenho mínimo do Foundry neste aparelho. "performanceMode" baixo também faz o
+ * Dice So Nice usar a qualidade mais leve (sem sombras, brilho, antisserrilhamento nem alta
+ * resolução), a não ser que o jogador tenha mudado a qualidade dos dados manualmente.
+ */
+const CONFIG_LEVE = {
+  "core.performanceMode": "0",
+  "core.maxFPS": "30",
+  "core.pixelRatioResolutionScaling": "false"
+};
 
 /** Documentos cujas janelas não abrem no celular (diários, cenas, imagens mostradas pelo mestre...). */
 const DOCUMENTOS_BLOQUEADOS = ["JournalEntry", "JournalEntryPage", "Scene", "Playlist", "PlaylistSound", "Macro", "RollTable", "Cards"];
@@ -76,7 +87,7 @@ function registrarConfiguracoes() {
     scope: "client",
     config: true,
     type: Boolean,
-    default: true,
+    default: false,
     requiresReload: true
   });
 
@@ -161,10 +172,14 @@ function prepararAparelho(ativo) {
           localStorage.setItem("core.noCanvas", "true");
           localStorage.setItem(MARCA_CANVAS, "1");
         }
-      } else if (localStorage.getItem(MARCA_CANVAS) === "1") {
-        localStorage.setItem("core.noCanvas", "false");
+      } else {
+        // Dados 3D: o Dice So Nice não liga em modo "sem canvas", venha ele de onde vier
+        // (deste módulo, do Mobile Sheet Only usado antes neste aparelho ou do próprio jogador).
+        if (localStorage.getItem("core.noCanvas") === "true") localStorage.setItem("core.noCanvas", "false");
         localStorage.removeItem(MARCA_CANVAS);
       }
+      if (usarDados3d()) aplicarModoLeve();
+      else restaurarDesempenho();
       if (localStorage.getItem(MARCA_AUDIO) === null) {
         const originais = Object.fromEntries(CHAVES_VOLUME.map((k) => [k, localStorage.getItem(k)]));
         localStorage.setItem(MARCA_AUDIO, JSON.stringify(originais));
@@ -173,6 +188,7 @@ function prepararAparelho(ativo) {
       return;
     }
     // Modo desligado: desfaz só o que o próprio módulo alterou.
+    restaurarDesempenho();
     if (localStorage.getItem(MARCA_CANVAS) === "1") {
       localStorage.setItem("core.noCanvas", "false");
       localStorage.removeItem(MARCA_CANVAS);
@@ -317,6 +333,35 @@ function aoRenderizarFicha(app, html) {
 /* -------------------------------------------- */
 /*  Viewport, zoom e tela                       */
 /* -------------------------------------------- */
+
+function aplicarModoLeve() {
+  if (localStorage.getItem(MARCA_LEVE) === null) {
+    const originais = Object.fromEntries(Object.keys(CONFIG_LEVE).map((k) => [k, localStorage.getItem(k)]));
+    localStorage.setItem(MARCA_LEVE, JSON.stringify(originais));
+  }
+  for (const [k, v] of Object.entries(CONFIG_LEVE)) localStorage.setItem(k, v);
+}
+
+function restaurarDesempenho() {
+  const salvo = localStorage.getItem(MARCA_LEVE);
+  if (salvo === null) return;
+  try {
+    for (const [k, v] of Object.entries(JSON.parse(salvo))) {
+      if (v === null) localStorage.removeItem(k);
+      else localStorage.setItem(k, v);
+    }
+  } catch {}
+  localStorage.removeItem(MARCA_LEVE);
+}
+
+/**
+ * O canvas do Foundry fica escondido; ele só existe para o relógio de animação do Dice So Nice.
+ * Marca o palco como "não desenhável" para a placa de vídeo não trabalhar à toa a cada quadro.
+ */
+function canvasSemDesenho() {
+  const app = globalThis.canvas?.app;
+  if (app?.stage) app.stage.renderable = false;
+}
 
 /**
  * Faz o canvas desenhar sempre uma "cena em branco" (como quando não há cena ativa):
@@ -765,7 +810,11 @@ Hooks.once("init", () => {
     configuracao: forcado ?? cfg("modo"),
     mestre: usuarioEhMestre(),
     aparelhoMovel: aparelhoMovel(),
-    mobileSheetOnly: msoAtivo()
+    mobileSheetOnly: msoAtivo(),
+    versao: game.modules.get(MODULE_ID)?.version,
+    diceSoNice: Boolean(game.modules.get("dice-so-nice")?.active),
+    dados3d: usarDados3d(),
+    semCanvas: localStorage.getItem("core.noCanvas")
   });
   prepararAparelho(ATIVO);
 
@@ -777,7 +826,10 @@ Hooks.once("init", () => {
   bloquearArrastoGlobal();
 
   if (!ATIVO) return;
-  if (usarDados3d()) canvasEmBranco();
+  if (usarDados3d()) {
+    canvasEmBranco();
+    Hooks.on("canvasReady", canvasSemDesenho);
+  }
   ajustarViewport();
   bloquearMinimizar();
   toqueLongoNoIOS();
@@ -804,6 +856,16 @@ Hooks.once("ready", () => {
   setTimeout(removerAvisoResolucao, 500);
   setTimeout(removerAvisoResolucao, 2000);
   setTimeout(abrirFicha, 300);
+  if (usarDados3d()) {
+    // O Dice So Nice se cria depois do "ready"; confere se ele subiu.
+    setTimeout(() => {
+      if (game.dice3d) console.log(`${MODULE_ID} | dados 3D prontos`);
+      else console.warn(`${MODULE_ID} | o Dice So Nice não iniciou neste aparelho`, {
+        semCanvas: game.settings.get("core", "noCanvas"),
+        canvasPronto: Boolean(globalThis.canvas?.app)
+      });
+    }, 5000);
+  }
 
   Hooks.on("updateUser", (user, mudancas) => {
     if (user.id === game.user.id && "character" in mudancas) atualizarFundo();

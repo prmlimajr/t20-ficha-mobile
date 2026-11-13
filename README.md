@@ -7,7 +7,7 @@ Módulo para Foundry VTT com o sistema **Tormenta20**, pensado para **jogos pres
 Nada do Foundry fica ativo além da ficha e do chat, para poupar bateria e processamento:
 
 - **Sem mapa:** o celular não mostra cena, tokens nem luzes. Isso é o que mais pesa num celular. Sem o Dice So Nice, o canvas nem é carregado (`core.noCanvas`).
-- **Dados 3D (Dice So Nice):** se o Dice So Nice estiver ativo, os dados 3D rolam por cima da ficha no celular. Para isso o canvas do Foundry fica ligado, mas sempre vazio. Com dados 3D, o aviso de rolagem só aparece depois que os dados param.
+- **Dados 3D (Dice So Nice), opcional e desligado por padrão:** ligando em **Mais → Ligar dados 3D**, os dados 3D rolam por cima da ficha no celular, com o Foundry e os dados na qualidade gráfica mínima. Para isso o canvas do Foundry fica ligado, mas sempre vazio. Com dados 3D, o aviso de rolagem só aparece depois que os dados param.
 - **Sem som:** música, ambiente e sons de interface ficam zerados no aparelho (o som sai da TV). Os volumes voltam ao sair do modo.
 - **Sem interface:** barra lateral, hotbar, controles de cena, navegação, lista de jogadores e câmeras ficam escondidos.
 - **Sem janelas extras:** diários, cenas, tabelas, macros e imagens mostradas pelo mestre não abrem no celular.
@@ -62,7 +62,7 @@ O sistema Tormenta20 não traz o arquivo da fonte. Para usá-la, o mestre cadast
 | Modo jogador | Automático | Liga ou desliga o modo neste aparelho |
 | Zoom da ficha e do chat (%) | 100 | Aumenta ou diminui o conteúdo |
 | Aviso de novidade no chat (segundos) | 4 | Quanto tempo o aviso fica na tela. 0 desliga o aviso |
-| Dados 3D do Dice So Nice | Sim | Mostra os dados 3D no celular. Desligue para economizar bateria em aparelhos fracos |
+| Dados 3D do Dice So Nice | Não | Mostra os dados 3D no celular, em qualidade gráfica mínima. Pesado: em celulares fracos a página pode travar. Também dá para ligar e desligar em **Mais** |
 | Manter a tela ligada | Sim | Usa a Wake Lock API (só em HTTPS) |
 
 ## Junto com o Mobile Sheet Only

@@ -18,7 +18,7 @@
       },
       "dados3d": {
         "Nome": "Dados 3D do Dice So Nice",
-        "Dica": "Mostra a animação dos dados 3D por cima da ficha neste aparelho. O mapa continua vazio, mas o celular gasta um pouco mais de bateria. Sem efeito se o Dice So Nice não estiver ativo."
+        "Dica": "Mostra a animação dos dados 3D por cima da ficha neste aparelho. Pesa bastante: em celulares mais fracos a página pode travar ou recarregar sozinha. Com ela ligada, o Foundry e os dados usam a qualidade gráfica mais baixa. Sem efeito se o Dice So Nice não estiver ativo."
       },
       "manterTelaLigada": {
         "Nome": "Manter a tela ligada",

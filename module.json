@@ -2,7 +2,7 @@
   "id": "t20-ficha-mobile",
   "title": "T20 — Ficha Mobile",
   "description": "Transforma o celular ou tablet do jogador num controle da própria ficha de Tormenta20: sem mapa, sem som e sem a interface do Foundry, só a ficha em uma coluna e o chat. O mestre e a TV não são afetados.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [
     {
       "name": "Paulo Lima"
@@ -10,7 +10,7 @@
   ],
   "url": "https://github.com/prmlimajr/t20-ficha-mobile",
   "manifest": "https://github.com/prmlimajr/t20-ficha-mobile/releases/latest/download/module.json",
-  "download": "https://github.com/prmlimajr/t20-ficha-mobile/releases/download/1.0.0/module.zip",
+  "download": "https://github.com/prmlimajr/t20-ficha-mobile/releases/download/1.0.1/module.zip",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
