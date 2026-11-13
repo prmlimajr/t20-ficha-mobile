@@ -16,6 +16,10 @@
         "Nome": "Chat notification (seconds)",
         "Dica": "How long the new or updated message notification stays over the sheet. 0 turns it off; the red dot on the Chat button remains."
       },
+      "dados3d": {
+        "Nome": "Dice So Nice 3D dice",
+        "Dica": "Shows the 3D dice animation over the sheet on this device. The map stays empty, but the phone uses a bit more battery. No effect if Dice So Nice is not active."
+      },
       "manterTelaLigada": {
         "Nome": "Keep screen on",
         "Dica": "Prevents the phone from turning off the screen during the game. Requires Foundry over HTTPS."
@@ -29,6 +33,8 @@
     "Menu": {
       "Trocar": "Switch character",
       "TelaCheia": "Fullscreen",
+      "Dados3dLigar": "Turn on 3D dice",
+      "Dados3dDesligar": "Turn off 3D dice",
       "Recarregar": "Reload",
       "Sair": "Leave player mode"
     },

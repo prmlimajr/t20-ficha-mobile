@@ -70,6 +70,16 @@ function registrarConfiguracoes() {
     default: 4
   });
 
+  game.settings.register(MODULE_ID, "dados3d", {
+    name: "T20FM.Config.dados3d.Nome",
+    hint: "T20FM.Config.dados3d.Dica",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    requiresReload: true
+  });
+
   game.settings.register(MODULE_ID, "manterTelaLigada", {
     name: "T20FM.Config.manterTelaLigada.Nome",
     hint: "T20FM.Config.manterTelaLigada.Dica",
@@ -133,12 +143,27 @@ function decidirModo(forcado) {
 /*  ser criado)                                 */
 /* -------------------------------------------- */
 
+/** Dice So Nice ativo no mundo e permitido neste aparelho? */
+function usarDados3d() {
+  return Boolean(game.modules.get("dice-so-nice")?.active) && cfg("dados3d");
+}
+
+/**
+ * Sem Dice So Nice: canvas desligado de vez (core.noCanvas).
+ * Com Dice So Nice: o canvas precisa existir (o DSN se desliga em modo "sem canvas" e usa o
+ * relógio de animação do canvas), então ele fica ligado, mas sempre vazio: ver canvasEmBranco().
+ */
 function prepararAparelho(ativo) {
   try {
     if (ativo) {
-      if (localStorage.getItem("core.noCanvas") !== "true") {
-        localStorage.setItem("core.noCanvas", "true");
-        localStorage.setItem(MARCA_CANVAS, "1");
+      if (!usarDados3d()) {
+        if (localStorage.getItem("core.noCanvas") !== "true") {
+          localStorage.setItem("core.noCanvas", "true");
+          localStorage.setItem(MARCA_CANVAS, "1");
+        }
+      } else if (localStorage.getItem(MARCA_CANVAS) === "1") {
+        localStorage.setItem("core.noCanvas", "false");
+        localStorage.removeItem(MARCA_CANVAS);
       }
       if (localStorage.getItem(MARCA_AUDIO) === null) {
         const originais = Object.fromEntries(CHAVES_VOLUME.map((k) => [k, localStorage.getItem(k)]));
@@ -292,6 +317,19 @@ function aoRenderizarFicha(app, html) {
 /* -------------------------------------------- */
 /*  Viewport, zoom e tela                       */
 /* -------------------------------------------- */
+
+/**
+ * Faz o canvas desenhar sempre uma "cena em branco" (como quando não há cena ativa):
+ * sem mapa, tokens, luzes ou texturas, mas com o motor de animação rodando para o Dice So Nice.
+ */
+function canvasEmBranco() {
+  const C = foundry.canvas?.Canvas ?? globalThis.Canvas;
+  const original = C?.prototype?.draw;
+  if (typeof original !== "function") return;
+  C.prototype.draw = function (_cena) {
+    return original.call(this, null);
+  };
+}
 
 function ajustarViewport() {
   let meta = document.querySelector('meta[name="viewport"]');
@@ -487,6 +525,15 @@ function abrirMenu() {
   m.replaceChildren();
   if (personagensDisponiveis().length > 1) m.append(botao("fa-solid fa-users", loc("Menu.Trocar"), trocarPersonagem));
   if (document.documentElement.requestFullscreen) m.append(botao("fa-solid fa-expand", loc("Menu.TelaCheia"), alternarTelaCheia));
+  if (game.modules.get("dice-so-nice")?.active) {
+    const ligados = Boolean(cfg("dados3d"));
+    m.append(
+      botao("fa-solid fa-dice-d20", loc(ligados ? "Menu.Dados3dDesligar" : "Menu.Dados3dLigar"), async () => {
+        await game.settings.set(MODULE_ID, "dados3d", !ligados);
+        window.location.reload(); // o canvas só liga ou desliga ao carregar a página
+      })
+    );
+  }
   m.append(botao("fa-solid fa-rotate", loc("Menu.Recarregar"), () => window.location.reload()));
   m.append(botao("fa-solid fa-desktop", loc("Menu.Sair"), sairDoModo, "t20fm-botao t20fm-sair"));
   m.classList.add("aberto");
@@ -517,8 +564,9 @@ function atualizarFundo() {
   const actor = personagemAtual();
   if (actor) {
     const img = el("img", "t20fm-retrato");
-    img.src = actor.img;
+    img.src = imagemDoToken(actor);
     img.alt = "";
+    img.addEventListener("error", () => (img.src = actor.img), { once: true });
     cartao.append(img, el("h1", "t20fm-nome", actor.name));
     cartao.append(botao("fa-solid fa-id-card", loc("Barra.Ficha"), abrirFicha, "t20fm-botao t20fm-principal"));
     return;
@@ -729,6 +777,7 @@ Hooks.once("init", () => {
   bloquearArrastoGlobal();
 
   if (!ATIVO) return;
+  if (usarDados3d()) canvasEmBranco();
   ajustarViewport();
   bloquearMinimizar();
   toqueLongoNoIOS();
@@ -741,7 +790,7 @@ Hooks.once("init", () => {
 Hooks.once("setup", () => {
   if (game.system?.id !== "tormenta20") return;
   adaptarClasses(); // reserva, caso as fichas ainda não estivessem registradas no init
-  if (!ATIVO) return;
+  if (!ATIVO || usarDados3d()) return;
   // Reforço: garante o canvas desligado mesmo que o Foundry mantenha um cache das configurações.
   try {
     if (!game.settings.get("core", "noCanvas")) game.settings.set("core", "noCanvas", true);
@@ -760,7 +809,7 @@ Hooks.once("ready", () => {
     if (user.id === game.user.id && "character" in mudancas) atualizarFundo();
   });
   Hooks.on("updateActor", (actor, mudancas) => {
-    if ("ownership" in mudancas || (actor.id === personagemAtual()?.id && ("name" in mudancas || "img" in mudancas))) {
+    if ("ownership" in mudancas || (actor.id === personagemAtual()?.id && ("name" in mudancas || "img" in mudancas || "prototypeToken" in mudancas))) {
       atualizarFundo();
     }
   });
@@ -768,7 +817,8 @@ Hooks.once("ready", () => {
   Hooks.on("deleteActor", () => atualizarFundo());
 
   // Novidade no chat enquanto o jogador está na ficha: marca o botão do chat e mostra o aviso.
-  Hooks.on("createChatMessage", (msg) => avisarChat(msg, false));
+  // Rolagem com dados 3D: o aviso só aparece depois que os dados param, para não entregar o resultado.
+  Hooks.on("createChatMessage", (msg) => depoisDosDados(msg, () => avisarChat(msg, false)));
   Hooks.on("updateChatMessage", (msg, mudancas) => {
     if ("content" in mudancas || "rolls" in mudancas) avisarChat(msg, true);
   });
@@ -806,6 +856,26 @@ function avisarChat(msg, atualizada) {
   }
   if (atualizada) texto = `${loc("Aviso.Atualizada")}: ${texto}`;
   mostrarAviso(autor, texto, valor, segundos);
+}
+
+/**
+ * Com o Dice So Nice rodando, espera os dados pararem antes de avisar
+ * (com um limite, caso a rolagem não seja animada).
+ */
+function depoisDosDados(msg, fn) {
+  if (!game.dice3d || !msg.rolls?.length) return fn();
+  let feito = false;
+  const executar = () => {
+    if (feito) return;
+    feito = true;
+    Hooks.off("diceSoNiceRollComplete", hook);
+    clearTimeout(limite);
+    fn();
+  };
+  const hook = Hooks.on("diceSoNiceRollComplete", (id) => {
+    if (id === msg.id) executar();
+  });
+  const limite = setTimeout(executar, 10000);
 }
 
 /** Um aviso por vez: um novo substitui o atual e reinicia o tempo. */

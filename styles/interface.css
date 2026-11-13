@@ -25,6 +25,12 @@ body.t20fm-ativo #board {
   display: none !important;
 }
 
+/* Dados 3D do Dice So Nice: por cima da ficha e do chat, abaixo do aviso, da barra e dos diálogos. */
+body.t20fm-ativo #dice-box-canvas {
+  z-index: 99998 !important;
+  pointer-events: none !important;
+}
+
 body.t20fm-ativo #interface {
   visibility: hidden !important;
 }
@@ -67,10 +73,10 @@ body.t20fm-ativo :is(#hotbar, #players, #navigation, #scene-navigation, #control
   align-self: center;
   width: 140px;
   height: 140px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid var(--t20fm-destaque);
-  background: var(--t20fm-cartao);
+  object-fit: contain; /* token inteiro, com moldura/anel, sem cortar */
+  border: none;
+  border-radius: 0;
+  background: none;
 }
 
 /*

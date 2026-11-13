@@ -6,11 +6,12 @@ Módulo para Foundry VTT com o sistema **Tormenta20**, pensado para **jogos pres
 
 Nada do Foundry fica ativo além da ficha e do chat, para poupar bateria e processamento:
 
-- **Sem mapa:** o canvas não é carregado neste aparelho (`core.noCanvas`), então nada de cena, tokens, luzes ou WebGL. Isso é o que mais pesa num celular. Dados 3D (Dice So Nice) também não aparecem no celular; eles continuam na TV.
+- **Sem mapa:** o celular não mostra cena, tokens nem luzes. Isso é o que mais pesa num celular. Sem o Dice So Nice, o canvas nem é carregado (`core.noCanvas`).
+- **Dados 3D (Dice So Nice):** se o Dice So Nice estiver ativo, os dados 3D rolam por cima da ficha no celular. Para isso o canvas do Foundry fica ligado, mas sempre vazio. Com dados 3D, o aviso de rolagem só aparece depois que os dados param.
 - **Sem som:** música, ambiente e sons de interface ficam zerados no aparelho (o som sai da TV). Os volumes voltam ao sair do modo.
 - **Sem interface:** barra lateral, hotbar, controles de cena, navegação, lista de jogadores e câmeras ficam escondidos.
 - **Sem janelas extras:** diários, cenas, tabelas, macros e imagens mostradas pelo mestre não abrem no celular.
-- **Barra no rodapé** com **Ficha**, **Chat** e **Mais** (trocar personagem, tela cheia, recarregar, sair do modo).
+- **Barra no rodapé** com **Ficha**, **Chat** e **Mais** (trocar personagem, tela cheia, ligar/desligar dados 3D, recarregar, sair do modo).
 - **Aviso de novidade no chat:** quando chega uma mensagem nova ou uma mensagem é atualizada, um aviso sobe do rodapé por alguns segundos, com o autor e o começo do texto (ou o total da rolagem). Só aparece um aviso por vez: um novo substitui o anterior. Tocar nele abre o chat. Um ponto vermelho no botão Chat fica marcado até o chat ser aberto.
 - **Ficha em tela cheia e em uma coluna.** Itens abertos a partir dela também ficam em tela cheia. Os diálogos de rolagem aparecem por cima e cabem na tela.
 - **Toque longo = clique direito no iPhone/iPad**, para os menus dos itens (editar, excluir, equipar). No Android isso já é nativo.
@@ -61,6 +62,7 @@ O sistema Tormenta20 não traz o arquivo da fonte. Para usá-la, o mestre cadast
 | Modo jogador | Automático | Liga ou desliga o modo neste aparelho |
 | Zoom da ficha e do chat (%) | 100 | Aumenta ou diminui o conteúdo |
 | Aviso de novidade no chat (segundos) | 4 | Quanto tempo o aviso fica na tela. 0 desliga o aviso |
+| Dados 3D do Dice So Nice | Sim | Mostra os dados 3D no celular. Desligue para economizar bateria em aparelhos fracos |
 | Manter a tela ligada | Sim | Usa a Wake Lock API (só em HTTPS) |
 
 ## Junto com o Mobile Sheet Only
@@ -74,3 +76,4 @@ Não é preciso usar os dois. Se o [Mobile Sheet Only](https://github.com/prmlim
 - Se o mundo usar áudio e vídeo (câmeras), a conexão de A/V continua sendo feita pelo Foundry no celular. As câmeras ficam escondidas, mas, para economizar de verdade, recuse a permissão de câmera e microfone no navegador do celular.
 - **Manter a tela ligada** só funciona com HTTPS. Em rede local via `http://`, desative o bloqueio automático de tela do celular durante a sessão.
 - **Arrastar e soltar fica desligado** na ficha em coluna: no celular, deslizar o dedo sobre um item podia virar "arrastar" e reordenar ou mover itens por engano. O dedo só rola a ficha. Para reorganizar itens, use a ficha no computador.
+- Os **dados 3D** usam a placa de vídeo do celular. Em aparelhos fracos, desligue a configuração "Dados 3D do Dice So Nice" ou baixe a qualidade gráfica nas configurações do próprio Dice So Nice.

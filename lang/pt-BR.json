@@ -16,6 +16,10 @@
         "Nome": "Aviso de novidade no chat (segundos)",
         "Dica": "Por quanto tempo o aviso de mensagem nova ou atualizada aparece sobre a ficha. 0 desliga o aviso; o ponto vermelho no botão Chat continua."
       },
+      "dados3d": {
+        "Nome": "Dados 3D do Dice So Nice",
+        "Dica": "Mostra a animação dos dados 3D por cima da ficha neste aparelho. O mapa continua vazio, mas o celular gasta um pouco mais de bateria. Sem efeito se o Dice So Nice não estiver ativo."
+      },
       "manterTelaLigada": {
         "Nome": "Manter a tela ligada",
         "Dica": "Impede que o celular apague a tela durante o jogo. Só funciona com o Foundry em HTTPS."
@@ -29,6 +33,8 @@
     "Menu": {
       "Trocar": "Trocar personagem",
       "TelaCheia": "Tela cheia",
+      "Dados3dLigar": "Ligar dados 3D",
+      "Dados3dDesligar": "Desligar dados 3D",
       "Recarregar": "Recarregar",
       "Sair": "Sair do modo jogador"
     },
